@@ -22,7 +22,7 @@ namespace Binance
         internal IList<Coin> Run()
         {
             var apiClient = new ApiClient(_key, _secret);
-            var binanceClient = new BinanceClient(apiClient);
+            var binanceClient = new BinanceClient(apiClient, loadTradingRules: false);
 
             var accountInfo = binanceClient.GetAccountInfo().Result;
             var balances = accountInfo.Balances.ToList();
