@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Binance
+﻿namespace Binance
 {
     public class Coin
     {
-        public string Name { get; set; }
         public string Abbreviation { get; set; }
         public decimal TotalBalance { get; set; }
         public decimal BTCValue { get; set; }
         public decimal USDValue { get; set; }
+        public decimal ETHCost { get; set; }
+        public decimal USDCost { get; set; }
+        public string Percentage1h { get; set; }
+        public string Percentage24h { get; set; }
+        public string Percentage7d { get; set; }
     }
 }
