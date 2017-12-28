@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Binance
 {
-    class FundsPrinter
+	class FundsPrinter
     {
         private IList<Coin> _coins;
         private bool _calculateUSDCost = ConfigHelper.CalculateUSDCost;
@@ -18,29 +18,31 @@ namespace Binance
 
         public void Print()
         {
-            Console.WriteLine();
-            if(_coins.Count == 0)
+			Console.Write("\r");
+
+			if (_coins.Count == 0)
             {
                 Console.WriteLine("No funds found");
                 return;
             }
 
-            var s = 0;
-            var formatStr = $"{{{s++},4}} {{{s++},11}} {{{s++},11}} {{{s++},10}}";
+			var s = 0;
+            var formatStr = $"{{{s++},4}} {{{s++},10}} {{{s++},11}} {{{s++},11}}";
 			var cParams = new List<object> { "Coin", "Total Bal", "BTC Value", "USD Value" };
 
             if (_includePercentChange)
             {
                 formatStr += $" {{{s++},7}} {{{s++},7}} {{{s++},8}}";
-                cParams.AddRange(new object[] { "1h %", "24h %", "7d %" });
+                cParams.AddRange(new object[] { "1h%", "24h%", "7d%" });
             }
 
             if(_calculateUSDCost)
             {
-                formatStr += $" {{{s++},11}} {{{s++},10}}";
+                formatStr += $" {{{s++},11}} {{{s++},11}}";
                 cParams.AddRange(new object[] { "ETH Cost", "USD Cost" });
             }
 
+			DrawLine(formatStr);
             Console.WriteLine(formatStr.Replace(" ", ""), cParams.ToArray());
             DrawLine(formatStr);
 
@@ -132,7 +134,7 @@ namespace Binance
                 count += int.Parse(digit);
             }
 
-            Console.WriteLine(new string('-', count));
+            Console.WriteLine(new string('=', count));
         }
     }
 }

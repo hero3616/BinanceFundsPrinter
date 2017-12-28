@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Binance.API.Csharp.Client;
+using NoobsMuc.Coinmarketcap.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Binance.API.Csharp.Client;
-using NoobsMuc.Coinmarketcap.Client;
 
 namespace Binance
 {
-    class Funds
+	class Funds
     {
         private BinanceClient _client;
         private bool _calculateUSDCost = ConfigHelper.CalculateUSDCost;
@@ -19,13 +19,13 @@ namespace Binance
             _client = c;
             if(_calculateUSDCost)
             {
-                _etherPriceList = EtherPrice.ReadList();
+				_etherPriceList = EtherPrice.ReadListFromUrl().GetAwaiter().GetResult();
             }
 
             if(_includePercentChange)
             {
 				ICoinmarketcapClient client = new CoinmarketcapClient();
-                _currencyList = client.GetCurrencies(400).ToList();
+                _currencyList = client.GetCurrencies(100).ToList();
             }
         }
 
@@ -64,7 +64,8 @@ namespace Binance
                             }
                             if(_includePercentChange)
                             {
-                                var currency = _currencyList.Where(c => c.Symbol == balance.Asset).FirstOrDefault();
+								var abbr = coin.Abbreviation == "IOTA" ? "MIOTA" : coin.Abbreviation;
+                                var currency = _currencyList.Where(c => c.Symbol == abbr).FirstOrDefault();
                                 if (currency != null)
                                 {
                                     coin.Percentage1h = currency.PercentChange1h;

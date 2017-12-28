@@ -42,11 +42,11 @@ public static class ConfigHelper
         }
     }
 
-    public static string EtherscanFile
-    {
-        get
-        {
-            return ConfigurationManager.AppSettings["EtherscanFile"];
-        }
-    }
+	public static string CalculateUSDCostFrom
+	{
+		get
+		{
+			return ConfigurationManager.AppSettings["CalculateUSDCostFrom"];
+		}
+	}
 }
