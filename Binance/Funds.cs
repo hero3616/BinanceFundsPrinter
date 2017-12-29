@@ -10,7 +10,9 @@ namespace Binance
     {
         private BinanceClient _client;
         private bool _calculateUSDCost = ConfigHelper.CalculateUSDCost;
-        private bool _includePercentChange = ConfigHelper.IncludePercentChange;
+        private bool _displayPercentage1h = ConfigHelper.DisplayPercentage1h;
+        private bool _displayPercentage24h = ConfigHelper.DisplayPercentage24h;
+        private bool _displayPercentage7d = ConfigHelper.DisplayPercentage7d;
         private IList<EtherPrice> _etherPriceList;
         private IList<Currency> _currencyList;
 
@@ -22,10 +24,10 @@ namespace Binance
 				_etherPriceList = EtherPrice.ReadListFromUrl().GetAwaiter().GetResult();
             }
 
-            if(_includePercentChange)
+            if(_displayPercentage1h || _displayPercentage24h || _displayPercentage7d)
             {
 				ICoinmarketcapClient client = new CoinmarketcapClient();
-                _currencyList = client.GetCurrencies(100).ToList();
+                _currencyList = client.GetCurrencies(600).ToList();
             }
         }
 
@@ -62,7 +64,7 @@ namespace Binance
 								coin.ETHCost = cost.Item1;
 								coin.USDCost = cost.Item2;
                             }
-                            if(_includePercentChange)
+                            if(_displayPercentage1h || _displayPercentage24h || _displayPercentage7d)
                             {
 								var abbr = coin.Abbreviation == "IOTA" ? "MIOTA" : coin.Abbreviation;
                                 var currency = _currencyList.Where(c => c.Symbol == abbr).FirstOrDefault();

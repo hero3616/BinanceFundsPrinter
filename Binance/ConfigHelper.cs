@@ -26,11 +26,35 @@ public static class ConfigHelper
         }
     }
 
-    public static bool IncludePercentChange
+    public static bool DisplayPercentage1h
     {
         get
         {
-            return bool.Parse(ConfigurationManager.AppSettings["IncludePercentChange"]);
+            return bool.Parse(ConfigurationManager.AppSettings["DisplayPercentage1h"]);
+        }
+    }
+
+    public static bool DisplayPercentage24h
+    {
+        get
+        {
+            return bool.Parse(ConfigurationManager.AppSettings["DisplayPercentage24h"]);
+        }
+    }
+
+    public static bool DisplayPercentage7d
+    {
+        get
+        {
+            return bool.Parse(ConfigurationManager.AppSettings["DisplayPercentage7d"]);
+        }
+    }
+
+    public static bool DisplayETHCost
+    {
+        get
+        {
+            return bool.Parse(ConfigurationManager.AppSettings["DisplayETHCost"]);
         }
     }
 
