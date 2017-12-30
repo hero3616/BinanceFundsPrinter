@@ -13,8 +13,9 @@ namespace Binance
         private bool _displayPercentage1h = ConfigHelper.DisplayPercentage1h;
         private bool _displayPercentage24h = ConfigHelper.DisplayPercentage24h;
         private bool _displayPercentage7d = ConfigHelper.DisplayPercentage7d;
+		private bool _displayProfit = ConfigHelper.DisplayProfit;
 
-        public FundsPrinter(IList<Coin> coins)
+		public FundsPrinter(IList<Coin> coins)
         {
             _coins = coins;
         }
@@ -51,17 +52,23 @@ namespace Binance
                 cParams.AddRange(new object[] { "7d%" });
             }
 
-            if(_displayETHCost)
-            {
-                formatStr += $" {{{s++},11}}";
-                cParams.AddRange(new object[] { "ETH Cost" });
-            }
+			if (_displayETHCost)
+			{
+				formatStr += $" {{{s++},11}}";
+				cParams.AddRange(new object[] { "ETH Cost" });
+			}
 
-            if(_calculateUSDCost)
-            {
-                formatStr += $" {{{s++},11}}";
-                cParams.AddRange(new object[] { "USD Cost" });
-            }
+			if (_calculateUSDCost)
+			{
+				formatStr += $" {{{s++},11}}";
+				cParams.AddRange(new object[] { "USD Cost" });
+			}
+
+			if (_displayProfit)
+			{
+				formatStr += $" {{{s++},9}}";
+				cParams.AddRange(new object[] { "Profit" });
+			}
 
 			DrawLine(formatStr);
             Console.WriteLine(formatStr.Replace(" ", ""), cParams.ToArray());
@@ -101,7 +108,10 @@ namespace Binance
                 if(_calculateUSDCost)
                     Console.Write(R(f[s++]), Math.Round(coin.USDCost, 2));
 
-                Console.WriteLine();
+				if (_displayProfit)
+					ColorWrite(R(f[s++]), coin.USDValue, coin.USDCost);
+
+				Console.WriteLine();
             }
 
             var btcTotal = scoins.Sum(c => c.BTCValue);
@@ -112,7 +122,7 @@ namespace Binance
             DrawLine(formatStr);
             cParams = new List<object> { string.Empty, "Total", btcTotal, usdTotal };
 
-            if(_displayPercentage1h)
+            if (_displayPercentage1h)
                 cParams.AddRange(new object[] { string.Empty });
 
             if (_displayPercentage24h)
@@ -121,11 +131,14 @@ namespace Binance
             if (_displayPercentage7d)
                 cParams.AddRange(new object[] { string.Empty });
 
-            if(_displayETHCost)
+            if (_displayETHCost)
                 cParams.AddRange(new object[] { ethCostTotal });
 
-            if(_calculateUSDCost)
+            if (_calculateUSDCost)
                 cParams.AddRange(new object[] { usdCostTotal });
+
+			if (_displayProfit)
+				cParams.AddRange(new object[] { string.Empty });
 
             Console.WriteLine(formatStr.Replace(" ", ""), cParams.ToArray());
         }
@@ -166,6 +179,17 @@ namespace Binance
             Console.Write(formatStr, value);
             Console.ResetColor();
         }
+
+		private void ColorWrite(string formatStr, decimal usdValue, decimal usdCost)
+		{
+			var val = Math.Round(usdValue, 2);
+			var cost = Math.Round(usdCost, 2);
+			var profit = 0m;
+			if (usdValue > 0.00m && usdCost > 0.00m)
+				profit = Math.Round(usdValue - usdCost, 2);
+
+			ColorWrite(formatStr, profit.ToString(), usdValue, usdCost);
+		}
 
         private string R(string s)
         {

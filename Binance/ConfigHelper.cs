@@ -66,6 +66,14 @@ public static class ConfigHelper
         }
     }
 
+	public static bool DisplayProfit
+	{
+		get
+		{
+			return bool.Parse(ConfigurationManager.AppSettings["DisplayProfit"]);
+		}
+	}
+
 	public static string CalculateUSDCostFrom
 	{
 		get
