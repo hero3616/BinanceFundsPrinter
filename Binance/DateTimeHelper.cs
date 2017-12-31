@@ -6,7 +6,7 @@ namespace Binance
     {
         public static DateTime UnixTimeToDateTime(double unixtime)
         {
-            DateTime sTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var sTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return sTime.AddSeconds(unixtime);
         }
     }

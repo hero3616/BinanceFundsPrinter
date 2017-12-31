@@ -6,27 +6,37 @@ using System.Linq;
 
 namespace Binance
 {
-	class Funds
+    class Funds
     {
         private BinanceClient _client;
-        private bool _calculateUSDCost = ConfigHelper.CalculateUSDCost;
-        private bool _displayPercentage1h = ConfigHelper.DisplayPercentage1h;
-        private bool _displayPercentage24h = ConfigHelper.DisplayPercentage24h;
-        private bool _displayPercentage7d = ConfigHelper.DisplayPercentage7d;
         private IList<EtherPrice> _etherPriceList;
         private IList<Currency> _currencyList;
 
         public Funds(BinanceClient c)
         {
             _client = c;
-            if(_calculateUSDCost)
-            {
-				_etherPriceList = EtherPrice.ReadListFromUrl().GetAwaiter().GetResult();
-            }
+            InitEtherPriceList();
+            InitCurrencyList();
+        }
 
-            if(_displayPercentage1h || _displayPercentage24h || _displayPercentage7d)
+        private void InitEtherPriceList()
+        {
+            if (ConfigHelper.CalculateUSDCost)
             {
-				ICoinmarketcapClient client = new CoinmarketcapClient();
+                _etherPriceList = EtherPrice.ReadListFromUrl().GetAwaiter().GetResult();
+            }
+        }
+
+        private void InitCurrencyList()
+        {
+            if (ConfigHelper.DisplayPercentage1h ||
+                ConfigHelper.DisplayPercentage24h ||
+                ConfigHelper.DisplayPercentage7d ||
+                ConfigHelper.DisplayUnitUSDValue ||
+                ConfigHelper.DisplayRank
+               )
+            {
+                ICoinmarketcapClient client = new CoinmarketcapClient();
                 _currencyList = client.GetCurrencies(600).ToList();
             }
         }
@@ -58,23 +68,37 @@ namespace Binance
                         {
                             coin.BTCValue = Math.Round(balance.Free * symbolPrice.Price, 8);
                             coin.USDValue = Math.Round(coin.BTCValue * btcusdt, 8);
-                            if(_calculateUSDCost)
+                            if (ConfigHelper.CalculateUSDCost)
                             {
-								var cost = GetETHCost(balance.Asset);
-								coin.ETHCost = cost.Item1;
-								coin.USDCost = cost.Item2;
+                                var cost = GetETHCost(balance.Asset);
+                                coin.ETHCost = cost.Item1;
+                                coin.USDCost = cost.Item2;
                             }
-                            if(_displayPercentage1h || _displayPercentage24h || _displayPercentage7d)
+
+                            var adjustedAbbreviation = GetAdjustedAbbreviation(coin.Abbreviation);
+                            var currency = _currencyList.Where(c => c.Symbol == adjustedAbbreviation).FirstOrDefault();
+                            var priceUsd = 0m;
+                            if (ConfigHelper.DisplayUnitUSDValue && decimal.TryParse(currency.PriceUsd, out priceUsd))
                             {
-								var abbr = coin.Abbreviation == "IOTA" ? "MIOTA" : coin.Abbreviation;
-                                var currency = _currencyList.Where(c => c.Symbol == abbr).FirstOrDefault();
+                                coin.UnitUSDValue = priceUsd;
+                            }
+
+                            if (ConfigHelper.DisplayPercentage1h || ConfigHelper.DisplayPercentage24h || ConfigHelper.DisplayPercentage7d)
+                            {
                                 if (currency != null)
                                 {
                                     coin.Percentage1h = currency.PercentChange1h;
                                     coin.Percentage24h = currency.PercentChange24h;
                                     coin.Percentage7d = currency.PercentChange7d;
-                                }                                
+                                }
                             }
+
+                            var rank = 0;
+                            if (ConfigHelper.DisplayRank && int.TryParse(currency.Rank, out rank))
+                            {
+                                coin.Rank = rank;
+                            }
+
                             coins.Add(coin);
                         }
                     }
@@ -84,9 +108,18 @@ namespace Binance
             return coins;
         }
 
+        private string GetAdjustedAbbreviation(string abbreviation)
+        {
+            var abbr = abbreviation == "IOTA" ? "MIOTA" : abbreviation;
+            return abbr;
+        }
+
         internal Tuple<decimal, decimal> GetETHCost(string coin)
         {
             if (coin == "ETH")
+                return Tuple.Create(0m, 0m);
+
+            if (coin == "BNB")
                 return Tuple.Create(0m, 0m);
 
             var ethCost = 0m;
@@ -102,6 +135,11 @@ namespace Binance
                 usdCost += CovertETHtoUSDbyDate(ethValue, trade.Time);
             }
 
+            if (coin == "QSP")
+            {
+                usdCost += 100.00m;
+            }
+
             return Tuple.Create(ethCost, usdCost);
         }
 
@@ -109,13 +147,13 @@ namespace Binance
         {
             var tradeDateTime = DateTimeHelper.UnixTimeToDateTime(tradeTime / 1000);
             var etherPrice = _etherPriceList.Where(p => p.DateUtcUnix.Date == tradeDateTime.Date).FirstOrDefault();
-			if(etherPrice == null)
-			{
-				tradeDateTime = tradeDateTime.AddDays(-1);
-				etherPrice = _etherPriceList.Where(p => p.DateUtcUnix.Date == tradeDateTime.Date).FirstOrDefault();
-			}
-            
-			if(etherPrice != null)
+            if (etherPrice == null)
+            {
+                tradeDateTime = tradeDateTime.AddDays(-1);
+                etherPrice = _etherPriceList.Where(p => p.DateUtcUnix.Date == tradeDateTime.Date).FirstOrDefault();
+            }
+
+            if (etherPrice != null)
             {
                 return etherPrice.USDValue * ethAmount;
             }

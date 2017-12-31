@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Binance
 {
-	public class EtherPrice
+    public class EtherPrice
     {
         public DateTime DateUtcUnix { get; set; }
         public decimal USDValue { get; set; }
@@ -21,41 +21,41 @@ namespace Binance
             return o;
         }
 
-		public static async Task<IList<EtherPrice>> ReadListFromUrl()
-		{
-			var list = new List<EtherPrice>();
+        public static async Task<IList<EtherPrice>> ReadListFromUrl()
+        {
+            var list = new List<EtherPrice>();
 
-			try
-			{
-				using (var client = new HttpClient())
-				{
-					client.Timeout = TimeSpan.FromSeconds(5);
-					using (var response = await client.GetAsync(ConfigHelper.CalculateUSDCostFrom))
-					using (var stream = await response.Content.ReadAsStreamAsync())
-					using (var reader = new StreamReader(stream))
-					{
-						string line;
-						var count = 0;
-						while ((line = await reader.ReadLineAsync()) != null)
-						{
-							count++;
-							if (count > 867)
-							{
-								var etherPrice = EtherPrice.LoadFromCsv(line);
-								list.Add(etherPrice);
-							}
-						}
-					}
-				}
-			}
-			catch
-			{
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("Could not read {0}.", ConfigHelper.CalculateUSDCostFrom);
-				Console.ResetColor();
-			}
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromSeconds(5);
+                    using (var response = await client.GetAsync(ConfigHelper.CalculateUSDCostFrom))
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    using (var reader = new StreamReader(stream))
+                    {
+                        string line;
+                        var count = 0;
+                        while ((line = await reader.ReadLineAsync()) != null)
+                        {
+                            count++;
+                            if (count > 867)
+                            {
+                                var etherPrice = EtherPrice.LoadFromCsv(line);
+                                list.Add(etherPrice);
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Could not read {0}.", ConfigHelper.CalculateUSDCostFrom);
+                Console.ResetColor();
+            }
 
-			return list;
-		}
+            return list;
+        }
     }
 }

@@ -2,83 +2,34 @@
 
 public static class ConfigHelper
 {
-    public static string BinanceApiKey
+    public static string BinanceApiKey => Config("BinanceApiKey");
+
+    public static string BinanceApiSecret => Config("BinanceApiSecret");
+
+    public static bool LoadTradingRules => bool.Parse(Config("LoadTradingRules"));
+
+    public static bool DisplayUnitUSDValue => bool.Parse(Config("DisplayUnitUSDValue"));
+
+    public static bool DisplayPercentage1h => bool.Parse(Config("DisplayPercentage1h"));
+
+    public static bool DisplayPercentage24h => bool.Parse(Config("DisplayPercentage24h"));
+
+    public static bool DisplayPercentage7d => bool.Parse(Config("DisplayPercentage7d"));
+
+    public static bool DisplayETHCost => bool.Parse(Config("DisplayETHCost"));
+
+    public static bool CalculateUSDCost => bool.Parse(Config("CalculateUSDCost"));
+
+    public static bool DisplayProfit => bool.Parse(Config("DisplayProfit"));
+
+    public static bool DisplayRank => bool.Parse(Config("DisplayRank"));
+
+    public static bool RepeatCoinLastColumn => bool.Parse(Config("RepeatCoinLastColumn"));
+
+    public static string CalculateUSDCostFrom => Config("CalculateUSDCostFrom");
+
+    private static string Config(string val)
     {
-        get
-        {
-            return ConfigurationManager.AppSettings["BinanceApiKey"];
-        }
+        return ConfigurationManager.AppSettings[val];
     }
-
-    public static string BinanceApiSecret
-    {
-        get
-        {
-            return ConfigurationManager.AppSettings["BinanceApiSecret"];
-        }
-    }
-
-    public static bool LoadTradingRules
-    {
-        get
-        {
-            return bool.Parse(ConfigurationManager.AppSettings["LoadTradingRules"]);
-        }
-    }
-
-    public static bool DisplayPercentage1h
-    {
-        get
-        {
-            return bool.Parse(ConfigurationManager.AppSettings["DisplayPercentage1h"]);
-        }
-    }
-
-    public static bool DisplayPercentage24h
-    {
-        get
-        {
-            return bool.Parse(ConfigurationManager.AppSettings["DisplayPercentage24h"]);
-        }
-    }
-
-    public static bool DisplayPercentage7d
-    {
-        get
-        {
-            return bool.Parse(ConfigurationManager.AppSettings["DisplayPercentage7d"]);
-        }
-    }
-
-    public static bool DisplayETHCost
-    {
-        get
-        {
-            return bool.Parse(ConfigurationManager.AppSettings["DisplayETHCost"]);
-        }
-    }
-
-    public static bool CalculateUSDCost
-    {
-        get
-        {
-            return bool.Parse(ConfigurationManager.AppSettings["CalculateUSDCost"]);
-        }
-    }
-
-	public static bool DisplayProfit
-	{
-		get
-		{
-			return bool.Parse(ConfigurationManager.AppSettings["DisplayProfit"]);
-		}
-	}
-
-	public static string CalculateUSDCostFrom
-	{
-		get
-		{
-			return ConfigurationManager.AppSettings["CalculateUSDCostFrom"];
-		}
-	}
 }

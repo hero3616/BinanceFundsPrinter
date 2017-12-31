@@ -58,13 +58,13 @@
       <HintPath>..\packages\NoobsMuc.Coinmarketcap.Client.1.0.1\lib\net461\NoobsMuc.Coinmarketcap.Client.dll</HintPath>
     </Reference>
     <Reference Include="Binance.API.Csharp.Client">
-      <HintPath>..\packages\Binance.API.Csharp.Client.1.2.1\lib\net46\Binance.API.Csharp.Client.dll</HintPath>
+      <HintPath>..\packages\Binance.API.Csharp.Client.1.3.0\lib\net46\Binance.API.Csharp.Client.dll</HintPath>
     </Reference>
     <Reference Include="Binance.API.Csharp.Client.Domain">
-      <HintPath>..\packages\Binance.API.Csharp.Client.1.2.1\lib\net46\Binance.API.Csharp.Client.Domain.dll</HintPath>
+      <HintPath>..\packages\Binance.API.Csharp.Client.1.3.0\lib\net46\Binance.API.Csharp.Client.Domain.dll</HintPath>
     </Reference>
     <Reference Include="Binance.API.Csharp.Client.Models">
-      <HintPath>..\packages\Binance.API.Csharp.Client.1.2.1\lib\net46\Binance.API.Csharp.Client.Models.dll</HintPath>
+      <HintPath>..\packages\Binance.API.Csharp.Client.1.3.0\lib\net46\Binance.API.Csharp.Client.Models.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
