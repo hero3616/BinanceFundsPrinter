@@ -64,6 +64,7 @@ namespace Binance
                     for (int j = 0; j < symbolPrices.Count; j++)
                     {
                         var symbolPrice = symbolPrices[j];
+
                         if (symbolPrice.Symbol == balance.Asset + "BTC")
                         {
                             coin.BTCValue = Math.Round(balance.Free * symbolPrice.Price, 8);
@@ -125,22 +126,30 @@ namespace Binance
             var ethCost = 0m;
             var usdCost = 0m;
 
-            var tradeList = _client.GetTradeList(coin + "ETH").Result;
-            foreach (var trade in tradeList)
-            {
-                if (!trade.IsBuyer)
-                    continue;
-                var ethValue = trade.Quantity * trade.Price;
-                ethCost += ethValue;
-                usdCost += CovertETHtoUSDbyDate(ethValue, trade.Time);
-            }
+			try
+			{
+				var tradeList = _client.GetTradeList(coin + "ETH").Result;
 
-            if (coin == "QSP")
-            {
-                usdCost += 100.00m;
-            }
+				foreach (var trade in tradeList)
+				{
+					if (!trade.IsBuyer)
+						continue;
+					var ethValue = trade.Quantity * trade.Price;
+					ethCost += ethValue;
+					usdCost += CovertETHtoUSDbyDate(ethValue, trade.Time);
+				}
 
-            return Tuple.Create(ethCost, usdCost);
+				if (ConfigHelper.AddManualCostForQSP && coin == "QSP")
+				{
+					usdCost += 100.00m;
+				}
+
+				return Tuple.Create(ethCost, usdCost);
+			}
+			catch
+			{
+				return Tuple.Create(0m, 0m);
+			}
         }
 
         internal decimal CovertETHtoUSDbyDate(decimal ethAmount, long tradeTime)

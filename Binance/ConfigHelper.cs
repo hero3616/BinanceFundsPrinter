@@ -28,7 +28,9 @@ public static class ConfigHelper
 
     public static string CalculateUSDCostFrom => Config("CalculateUSDCostFrom");
 
-    private static string Config(string val)
+	public static bool AddManualCostForQSP => bool.Parse(Config("AddManualCostForQSP"));
+
+	private static string Config(string val)
     {
         return ConfigurationManager.AppSettings[val];
     }
