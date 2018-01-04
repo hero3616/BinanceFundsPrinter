@@ -30,6 +30,8 @@ public static class ConfigHelper
 
 	public static bool AddManualCostForQSP => bool.Parse(Config("AddManualCostForQSP"));
 
+    public static int CoinMarketCapFetchCount => int.Parse(Config("CoinMarketCapFetchCount"));
+
 	private static string Config(string val)
     {
         return ConfigurationManager.AppSettings[val];

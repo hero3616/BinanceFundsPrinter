@@ -37,7 +37,7 @@ namespace Binance
                )
             {
                 ICoinmarketcapClient client = new CoinmarketcapClient();
-                _currencyList = client.GetCurrencies(600).ToList();
+                _currencyList = client.GetCurrencies(ConfigHelper.CoinMarketCapFetchCount).ToList();
             }
         }
 
