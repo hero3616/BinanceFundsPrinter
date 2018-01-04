@@ -132,11 +132,26 @@ namespace Binance
 
 				foreach (var trade in tradeList)
 				{
-					if (!trade.IsBuyer)
-						continue;
 					var ethValue = trade.Quantity * trade.Price;
-					ethCost += ethValue;
-					usdCost += CovertETHtoUSDbyDate(ethValue, trade.Time);
+                    var convertedCost = ConvertETHtoUSDbyDate(ethValue, trade.Time);
+                    if (!trade.IsBuyer)
+                    {
+                        // sell
+                        if (coin == "LTC")
+                        {
+                            // TODO
+                            continue;
+                        }
+                        
+                        ethCost -= ethValue;
+                        usdCost -= convertedCost;
+                    }
+                    else
+                    {
+                        // buy
+                        ethCost += ethValue;
+                        usdCost += convertedCost;
+                    }
 				}
 
 				if (ConfigHelper.AddManualCostForQSP && coin == "QSP")
@@ -152,7 +167,7 @@ namespace Binance
 			}
         }
 
-        internal decimal CovertETHtoUSDbyDate(decimal ethAmount, long tradeTime)
+        internal decimal ConvertETHtoUSDbyDate(decimal ethAmount, long tradeTime)
         {
             var tradeDateTime = DateTimeHelper.UnixTimeToDateTime(tradeTime / 1000);
             var etherPrice = _etherPriceList.Where(p => p.DateUtcUnix.Date == tradeDateTime.Date).FirstOrDefault();
