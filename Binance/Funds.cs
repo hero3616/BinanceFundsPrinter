@@ -71,9 +71,17 @@ namespace Binance
                             coin.USDValue = Math.Round(coin.BTCValue * btcusdt, 8);
                             if (ConfigHelper.CalculateUSDCost)
                             {
-                                var cost = GetETHCost(balance.Asset);
-                                coin.ETHCost = cost.Item1;
-                                coin.USDCost = cost.Item2;
+                                if (balance.Asset == "ETH")
+                                {
+                                    coin.ETHCost = balance.Free;
+                                    coin.USDCost = balance.Free * 1050;
+								}
+                                else
+                                {
+                                    var cost = GetETHCost(balance.Asset);
+                                    coin.ETHCost = cost.Item1;
+                                    coin.USDCost = cost.Item2;
+                                }
                             }
 
                             var adjustedAbbreviation = GetAdjustedAbbreviation(coin.Abbreviation);
@@ -117,9 +125,6 @@ namespace Binance
 
         internal Tuple<decimal, decimal> GetETHCost(string coin)
         {
-            if (coin == "ETH")
-                return Tuple.Create(0m, 0m);
-
             if (coin == "BNB")
                 return Tuple.Create(0m, 0m);
 
