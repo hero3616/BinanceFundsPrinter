@@ -171,7 +171,7 @@ namespace Binance
         {
             var tradeDateTime = DateTimeHelper.UnixTimeToDateTime(tradeTime / 1000);
             var etherPrice = _etherPriceList.Where(p => p.DateUtcUnix.Date == tradeDateTime.Date).FirstOrDefault();
-            if (etherPrice == null)
+            while (etherPrice == null || etherPrice.USDValue == 0)
             {
                 tradeDateTime = tradeDateTime.AddDays(-1);
                 etherPrice = _etherPriceList.Where(p => p.DateUtcUnix.Date == tradeDateTime.Date).FirstOrDefault();
