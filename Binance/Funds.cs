@@ -1,8 +1,8 @@
-﻿using Binance.API.Csharp.Client;
-using NoobsMuc.Coinmarketcap.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Binance.API.Csharp.Client;
+using NoobsMuc.Coinmarketcap.Client;
 
 namespace Binance
 {
@@ -74,7 +74,10 @@ namespace Binance
                                 if (balance.Asset == "ETH")
                                 {
                                     coin.ETHCost = balance.Free;
-                                    coin.USDCost = balance.Free * 1050;
+                                    if (balance.Free > 0.001m)
+                                    {
+                                        coin.USDCost = balance.Free * 1050;
+                                    }
                                 }
                                 else
                                 {
@@ -84,33 +87,45 @@ namespace Binance
                                 }
                             }
 
-                            var adjustedAbbreviation = GetAdjustedAbbreviation(coin.Abbreviation);
-                            var currency = _currencyList.Where(c => c.Symbol == adjustedAbbreviation).FirstOrDefault();
-                            var priceUsd = 0m;
-                            if (ConfigHelper.DisplayUnitUSDValue && decimal.TryParse(currency.PriceUsd, out priceUsd))
-                            {
-                                coin.UnitUSDValue = priceUsd;
-                            }
-
-                            if (ConfigHelper.DisplayPercentage1h || ConfigHelper.DisplayPercentage24h || ConfigHelper.DisplayPercentage7d)
-                            {
-                                if (currency != null)
-                                {
-                                    coin.Percentage1h = currency.PercentChange1h;
-                                    coin.Percentage24h = currency.PercentChange24h;
-                                    coin.Percentage7d = currency.PercentChange7d;
-                                }
-                            }
-
                             if (ConfigHelper.DisplayProfitPercent)
                             {
                                 coin.ProfitPercent = CalculateProfitPercent(coin.USDValue, coin.USDCost);
                             }
 
-                            var rank = 0;
-                            if (ConfigHelper.DisplayRank && int.TryParse(currency.Rank, out rank))
+                            var adjustedAbbreviation = GetAdjustedAbbreviation(coin.Abbreviation);
+                            var currency = _currencyList.Where(c => c.Symbol == adjustedAbbreviation).FirstOrDefault();
+
+                            if (currency == null)
                             {
-                                coin.Rank = rank;
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine();
+                                Console.WriteLine("Coin {0} not found in CoinMarketCap list. Make sure CoinMarketCapFetchCount config is set properly to include {0} rank.", adjustedAbbreviation);
+                                Console.ResetColor();
+                            }
+
+                            if (currency != null)
+                            {
+                                var priceUsd = 0m;
+                                if (ConfigHelper.DisplayUnitUSDValue && decimal.TryParse(currency.PriceUsd, out priceUsd))
+                                {
+                                    coin.UnitUSDValue = priceUsd;
+                                }
+
+                                if (ConfigHelper.DisplayPercentage1h || ConfigHelper.DisplayPercentage24h || ConfigHelper.DisplayPercentage7d)
+                                {
+                                    if (currency != null)
+                                    {
+                                        coin.Percentage1h = currency.PercentChange1h;
+                                        coin.Percentage24h = currency.PercentChange24h;
+                                        coin.Percentage7d = currency.PercentChange7d;
+                                    }
+                                }
+
+                                var rank = 0;
+                                if (ConfigHelper.DisplayRank && int.TryParse(currency.Rank, out rank))
+                                {
+                                    coin.Rank = rank;
+                                }
                             }
 
                             coins.Add(coin);

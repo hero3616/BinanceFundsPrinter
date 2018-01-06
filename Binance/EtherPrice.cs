@@ -50,6 +50,7 @@ namespace Binance
             }
             catch
             {
+                Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Could not read {0}.", ConfigHelper.CalculateUSDCostFrom);
                 Console.ResetColor();

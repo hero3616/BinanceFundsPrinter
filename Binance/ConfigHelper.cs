@@ -32,11 +32,13 @@ public static class ConfigHelper
 
     public static int CalculateUSDCostFromTimeout => int.Parse(Config("CalculateUSDCostFromTimeout"));
 
-    public static bool AddManualCostForQSP => bool.Parse(Config("AddManualCostForQSP"));
-
     public static int CoinMarketCapFetchCount => int.Parse(Config("CoinMarketCapFetchCount"));
 
     public static string OrderDescendingBy => Config("OrderDescendingBy");
+
+    public static bool AddManualCostForQSP => bool.Parse(Config("AddManualCostForQSP"));
+
+    public static decimal CalculateETHBalanceUSDValue => decimal.Parse(Config("CalculateETHBalanceUSDValue"));
 
     private static string Config(string val)
     {
