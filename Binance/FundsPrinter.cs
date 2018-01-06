@@ -26,7 +26,7 @@ namespace Binance
 
             var s = 0;
             var formatStr = $"{{{s++},4}} {{{s++},10}} {{{s++},11}} {{{s++},11}}";
-            var cParams = new List<object> { "Coin", "Total Bal", "BTC Value", "USD Value" };
+            var cParams = new List<object> { "Coin", "Balance ", "BTC Value", "  $ Value" };
 
             if (ConfigHelper.DisplayUnitUSDValue)
             {
@@ -61,13 +61,19 @@ namespace Binance
             if (ConfigHelper.CalculateUSDCost)
             {
                 formatStr += $" {{{s++},11}}";
-                cParams.AddRange(new object[] { "USD Cost" });
+                cParams.AddRange(new object[] { "  $ Cost" });
             }
 
             if (ConfigHelper.DisplayProfit)
             {
                 formatStr += $" {{{s++},9}}";
                 cParams.AddRange(new object[] { "Profit" });
+            }
+
+            if (ConfigHelper.DisplayProfitPercent)
+            {
+                formatStr += $" {{{s++},8}}";
+                cParams.AddRange(new object[] { "USD% " });
             }
 
             if (ConfigHelper.DisplayRank)
@@ -86,7 +92,23 @@ namespace Binance
             Console.WriteLine(formatStr.Replace(" ", ""), cParams.ToArray());
             DrawLine(formatStr);
 
-            var scoins = _coins.OrderByDescending(c => c.USDValue).ToList();
+            IList<Coin> scoins;
+
+            switch (ConfigHelper.OrderDescendingBy)
+            {
+                case "USDValue":
+                    scoins = _coins.OrderByDescending(c => c.USDValue).ToList();
+                    break;
+                case "USDCost":
+                    scoins = _coins.OrderByDescending(c => c.USDCost).ToList();
+                    break;
+                case "ProfitPercent":
+                    scoins = _coins.OrderByDescending(c => c.ProfitPercent != 0).ThenByDescending(c => c.ProfitPercent).ToList();
+                    break;
+                default:
+                    scoins = _coins.OrderByDescending(c => c.USDValue).ToList();
+                    break;
+            }
 
             for (int i = 0; i < scoins.Count; i++)
             {
@@ -126,6 +148,9 @@ namespace Binance
                 if (ConfigHelper.DisplayProfit)
                     ColorWrite(R(f[s++]), coin.USDValue, coin.USDCost);
 
+                if (ConfigHelper.DisplayProfitPercent)
+                    ColorWrite(R(f[s++]), Math.Round(coin.ProfitPercent, 2).ToString());
+
                 if (ConfigHelper.DisplayRank)
                     Console.Write(R(f[s++]), coin.Rank);
 
@@ -164,6 +189,9 @@ namespace Binance
             if (ConfigHelper.DisplayProfit)
                 cParams.AddRange(new object[] { string.Empty });
 
+            if (ConfigHelper.DisplayProfitPercent)
+                cParams.AddRange(new object[] { string.Empty });
+
             if (ConfigHelper.DisplayRank)
                 cParams.AddRange(new object[] { string.Empty });
 
@@ -199,6 +227,12 @@ namespace Binance
             if (string.IsNullOrWhiteSpace(value))
             {
                 Console.Write(formatStr, string.Empty);
+                return;
+            }
+
+            if (value == "0" || value == "0.00")
+            {
+                Console.Write(formatStr, value);
                 return;
             }
 

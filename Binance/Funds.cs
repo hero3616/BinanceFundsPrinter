@@ -75,7 +75,7 @@ namespace Binance
                                 {
                                     coin.ETHCost = balance.Free;
                                     coin.USDCost = balance.Free * 1050;
-								}
+                                }
                                 else
                                 {
                                     var cost = GetETHCost(balance.Asset);
@@ -102,6 +102,11 @@ namespace Binance
                                 }
                             }
 
+                            if (ConfigHelper.DisplayProfitPercent)
+                            {
+                                coin.ProfitPercent = CalculateProfitPercent(coin.USDValue, coin.USDCost);
+                            }
+
                             var rank = 0;
                             if (ConfigHelper.DisplayRank && int.TryParse(currency.Rank, out rank))
                             {
@@ -115,6 +120,18 @@ namespace Binance
             }
 
             return coins;
+        }
+
+        private decimal CalculateProfitPercent(decimal USDValue, decimal USDCost)
+        {
+            var percent = 0m;
+
+            if (USDCost <= 10 || USDCost == 0)
+                return 0m;
+
+            percent = (USDValue - USDCost) / USDCost * 100;
+
+            return percent;
         }
 
         private string GetAdjustedAbbreviation(string abbreviation)
@@ -131,13 +148,13 @@ namespace Binance
             var ethCost = 0m;
             var usdCost = 0m;
 
-			try
-			{
-				var tradeList = _client.GetTradeList(coin + "ETH").Result;
+            try
+            {
+                var tradeList = _client.GetTradeList(coin + "ETH").Result;
 
-				foreach (var trade in tradeList)
-				{
-					var ethValue = trade.Quantity * trade.Price;
+                foreach (var trade in tradeList)
+                {
+                    var ethValue = trade.Quantity * trade.Price;
                     var convertedCost = ConvertETHtoUSDbyDate(ethValue, trade.Time);
                     if (!trade.IsBuyer)
                     {
@@ -147,7 +164,7 @@ namespace Binance
                             // TODO
                             continue;
                         }
-                        
+
                         ethCost -= ethValue;
                         usdCost -= convertedCost;
                     }
@@ -157,19 +174,19 @@ namespace Binance
                         ethCost += ethValue;
                         usdCost += convertedCost;
                     }
-				}
+                }
 
-				if (ConfigHelper.AddManualCostForQSP && coin == "QSP")
-				{
-					usdCost += 100.00m;
-				}
+                if (ConfigHelper.AddManualCostForQSP && coin == "QSP")
+                {
+                    usdCost += 100.00m;
+                }
 
-				return Tuple.Create(ethCost, usdCost);
-			}
-			catch
-			{
-				return Tuple.Create(0m, 0m);
-			}
+                return Tuple.Create(ethCost, usdCost);
+            }
+            catch
+            {
+                return Tuple.Create(0m, 0m);
+            }
         }
 
         internal decimal ConvertETHtoUSDbyDate(decimal ethAmount, long tradeTime)

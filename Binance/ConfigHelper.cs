@@ -24,15 +24,21 @@ public static class ConfigHelper
 
     public static bool DisplayRank => bool.Parse(Config("DisplayRank"));
 
+    public static bool DisplayProfitPercent => bool.Parse(Config("DisplayProfitPercent"));
+
     public static bool RepeatCoinLastColumn => bool.Parse(Config("RepeatCoinLastColumn"));
 
     public static string CalculateUSDCostFrom => Config("CalculateUSDCostFrom");
 
-	public static bool AddManualCostForQSP => bool.Parse(Config("AddManualCostForQSP"));
+    public static int CalculateUSDCostFromTimeout => int.Parse(Config("CalculateUSDCostFromTimeout"));
+
+    public static bool AddManualCostForQSP => bool.Parse(Config("AddManualCostForQSP"));
 
     public static int CoinMarketCapFetchCount => int.Parse(Config("CoinMarketCapFetchCount"));
 
-	private static string Config(string val)
+    public static string OrderDescendingBy => Config("OrderDescendingBy");
+
+    private static string Config(string val)
     {
         return ConfigurationManager.AppSettings[val];
     }

@@ -29,7 +29,7 @@ namespace Binance
             {
                 using (var client = new HttpClient())
                 {
-                    client.Timeout = TimeSpan.FromSeconds(5);
+                    client.Timeout = TimeSpan.FromSeconds(ConfigHelper.CalculateUSDCostFromTimeout);
                     using (var response = await client.GetAsync(ConfigHelper.CalculateUSDCostFrom))
                     using (var stream = await response.Content.ReadAsStreamAsync())
                     using (var reader = new StreamReader(stream))

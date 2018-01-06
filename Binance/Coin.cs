@@ -12,6 +12,7 @@
         public string Percentage1h { get; set; }
         public string Percentage24h { get; set; }
         public string Percentage7d { get; set; }
+        public decimal ProfitPercent { get; set; }
         public int Rank { get; set; }
     }
 }
