@@ -128,7 +128,7 @@ namespace Binance
                 Console.Write(R(f[s++]), usdValue);
 
                 if (ConfigHelper.DisplayUnitUSDValue)
-                    Console.Write(R(f[s++]), Math.Round(coin.UnitUSDValue, 2));
+                    Console.Write(R(f[s++]), Math.Round(coin.UnitUSDValue, coin.UnitUSDValue < 1 ? 4 : 2));
 
                 if (ConfigHelper.DisplayPercentage1h)
                     ColorWrite(R(f[s++]), coin.Percentage1h);
