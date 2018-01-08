@@ -92,39 +92,41 @@ namespace Binance
                                 coin.ProfitPercent = CalculateProfitPercent(coin.USDValue, coin.USDCost);
                             }
 
-                            var adjustedAbbreviation = GetAdjustedAbbreviation(coin.Abbreviation);
-                            var currency = _currencyList.Where(c => c.Symbol == adjustedAbbreviation).FirstOrDefault();
-
-                            if (currency == null)
+                            if (_currencyList != null)
                             {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine();
-                                Console.WriteLine("Coin {0} not found in CoinMarketCap list. Make sure CoinMarketCapFetchCount config is set properly to include {0} rank.", adjustedAbbreviation);
-                                Console.ResetColor();
-                            }
-
-                            if (currency != null)
-                            {
-                                var priceUsd = 0m;
-                                if (ConfigHelper.DisplayUnitUSDValue && decimal.TryParse(currency.PriceUsd, out priceUsd))
+                                var adjustedAbbreviation = GetAdjustedAbbreviation(coin.Abbreviation);
+                                var currency = _currencyList.FirstOrDefault(c => c.Symbol == adjustedAbbreviation);
+                                if (currency == null)
                                 {
-                                    coin.UnitUSDValue = priceUsd;
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    Console.WriteLine();
+                                    Console.WriteLine("Coin {0} not found in CoinMarketCap list. Make sure CoinMarketCapFetchCount config is set properly to include {0} rank.", adjustedAbbreviation);
+                                    Console.ResetColor();
                                 }
 
-                                if (ConfigHelper.DisplayPercentage1h || ConfigHelper.DisplayPercentage24h || ConfigHelper.DisplayPercentage7d)
+                                if (currency != null)
                                 {
-                                    if (currency != null)
+                                    var priceUsd = 0m;
+                                    if (ConfigHelper.DisplayUnitUSDValue && decimal.TryParse(currency.PriceUsd, out priceUsd))
                                     {
-                                        coin.Percentage1h = currency.PercentChange1h;
-                                        coin.Percentage24h = currency.PercentChange24h;
-                                        coin.Percentage7d = currency.PercentChange7d;
+                                        coin.UnitUSDValue = priceUsd;
                                     }
-                                }
 
-                                var rank = 0;
-                                if (ConfigHelper.DisplayRank && int.TryParse(currency.Rank, out rank))
-                                {
-                                    coin.Rank = rank;
+                                    if (ConfigHelper.DisplayPercentage1h || ConfigHelper.DisplayPercentage24h || ConfigHelper.DisplayPercentage7d)
+                                    {
+                                        if (currency != null)
+                                        {
+                                            coin.Percentage1h = currency.PercentChange1h;
+                                            coin.Percentage24h = currency.PercentChange24h;
+                                            coin.Percentage7d = currency.PercentChange7d;
+                                        }
+                                    }
+
+                                    var rank = 0;
+                                    if (ConfigHelper.DisplayRank && int.TryParse(currency.Rank, out rank))
+                                    {
+                                        coin.Rank = rank;
+                                    }
                                 }
                             }
 

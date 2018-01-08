@@ -100,10 +100,14 @@ namespace Binance
                     scoins = _coins.OrderByDescending(c => c.USDValue).ToList();
                     break;
                 case "USDCost":
-                    scoins = _coins.OrderByDescending(c => c.USDCost).ToList();
+                    scoins = ConfigHelper.CalculateUSDCost ?
+                                         _coins.OrderByDescending(c => c.USDCost).ToList()
+                                         : _coins.OrderByDescending(c => c.USDValue).ToList();
                     break;
                 case "ProfitPercent":
-                    scoins = _coins.OrderByDescending(c => c.ProfitPercent != 0).ThenByDescending(c => c.ProfitPercent).ToList();
+                    scoins = ConfigHelper.CalculateUSDCost ?
+                                         _coins.OrderByDescending(c => c.ProfitPercent != 0).ThenByDescending(c => c.ProfitPercent).ToList()
+                                         : _coins.OrderByDescending(c => c.USDValue).ToList();
                     break;
                 default:
                     scoins = _coins.OrderByDescending(c => c.USDValue).ToList();
@@ -181,7 +185,7 @@ namespace Binance
                 cParams.AddRange(new object[] { string.Empty });
 
             if (ConfigHelper.DisplayETHCost)
-                cParams.AddRange(new object[] { ethCostTotal });
+                cParams.AddRange(new object[] { " " + ethCostTotal });
 
             if (ConfigHelper.CalculateUSDCost)
                 cParams.AddRange(new object[] { usdCostTotal });
