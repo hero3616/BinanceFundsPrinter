@@ -28,7 +28,9 @@ public static class ConfigHelper
 
     public static bool RepeatCoinLastColumn => bool.Parse(Config("RepeatCoinLastColumn"));
 
-    public static string CalculateUSDCostFrom => Config("CalculateUSDCostFrom");
+    public static string CalculateUSDCostFromUrl => Config("CalculateUSDCostFromUrl");
+
+    public static string CalculateUSDCostFromFile => Config("CalculateUSDCostFromFile");
 
     public static int CalculateUSDCostFromTimeout => int.Parse(Config("CalculateUSDCostFromTimeout"));
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Binance.API.Csharp.Client;
 using NoobsMuc.Coinmarketcap.Client;
@@ -23,7 +24,10 @@ namespace Binance
         {
             if (ConfigHelper.CalculateUSDCost)
             {
-                _etherPriceList = EtherPrice.ReadListFromUrl().GetAwaiter().GetResult();
+                if (File.Exists(ConfigHelper.CalculateUSDCostFromFile))
+                    _etherPriceList = EtherPrice.ReadListFromFile();
+                else
+                    _etherPriceList = EtherPrice.ReadListFromUrl().GetAwaiter().GetResult();
             }
         }
 
