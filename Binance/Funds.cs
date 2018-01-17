@@ -33,16 +33,7 @@ namespace Binance
 
         private void InitCurrencyList()
         {
-            if (ConfigHelper.DisplayPercentage1h ||
-                ConfigHelper.DisplayPercentage24h ||
-                ConfigHelper.DisplayPercentage7d ||
-                ConfigHelper.DisplayUnitUSDValue ||
-                ConfigHelper.DisplayRank
-               )
-            {
-                ICoinmarketcapClient client = new CoinmarketcapClient();
-                _currencyList = client.GetCurrencies(ConfigHelper.CoinMarketCapFetchCount).ToList();
-            }
+            _currencyList = Coinmarketcap.GetCurrencyList();
         }
 
         internal IList<Coin> Run()

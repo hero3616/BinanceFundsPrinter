@@ -8,15 +8,28 @@ namespace Binance
     class FundsPrinter
     {
         private IList<Coin> _coins;
+        private string _totalMarketCap;
 
         public FundsPrinter(IList<Coin> coins)
         {
             _coins = coins;
+            if (ConfigHelper.DisplayMarketCap)
+            {
+                _totalMarketCap = Coinmarketcap.GetMarketCap().GetAwaiter().GetResult();
+            }
         }
 
         public void Print()
         {
             Console.Write("\r");
+
+            if (ConfigHelper.DisplayMarketCap)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                var str = string.Format("{0:C0}", Convert.ToInt64(_totalMarketCap));
+                Console.WriteLine("Market cap = {0}", str);
+                Console.ResetColor();
+            }
 
             if (_coins.Count == 0)
             {
