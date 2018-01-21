@@ -216,6 +216,13 @@ namespace Binance
                 cParams.AddRange(new object[] { string.Empty });
 
             Console.WriteLine(formatStr.Replace(" ", ""), cParams.ToArray());
+
+            if (Coinmarketcap.ApiProblemDetected)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("CoinMarketCap API seems to be down. Some columns are disabled.");
+                Console.ResetColor();
+            }
         }
 
         private void ColorWrite(string formatStr, string value, decimal usdValue, decimal usdCost)

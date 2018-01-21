@@ -10,18 +10,33 @@ namespace Binance
 {
     public class Coinmarketcap
     {
+        public static bool ApiProblemDetected = false;
+
         public static IList<Currency> GetCurrencyList()
         {
-            if (ConfigHelper.DisplayPercentage1h ||
+            if (ConfigHelper.DisplayUnitUSDValue ||
+                ConfigHelper.DisplayPercentage1h ||
                 ConfigHelper.DisplayPercentage24h ||
                 ConfigHelper.DisplayPercentage7d ||
-                ConfigHelper.DisplayUnitUSDValue ||
                 ConfigHelper.DisplayRank ||
                 ConfigHelper.DisplayMarketCap
                )
             {
-                ICoinmarketcapClient client = new CoinmarketcapClient();
-                return client.GetCurrencies(ConfigHelper.CoinMarketCapFetchCount).ToList();
+                try
+                {
+                    ICoinmarketcapClient client = new CoinmarketcapClient();
+                    return client.GetCurrencies(ConfigHelper.CoinMarketCapFetchCount).ToList();
+                }
+                catch
+                {
+                    ApiProblemDetected = true;
+                    ConfigHelper.DisplayUnitUSDValue = false;
+                    ConfigHelper.DisplayPercentage1h = false;
+                    ConfigHelper.DisplayPercentage24h = false;
+                    ConfigHelper.DisplayPercentage7d = false;
+                    ConfigHelper.DisplayRank = false;
+                    ConfigHelper.DisplayMarketCap = false;
+                }
             }
 
             return null;
