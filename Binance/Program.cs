@@ -20,7 +20,10 @@ namespace Binance
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error: {0}", ex.Message);
+                var msg = ex.Message;
+                if (ex.InnerException != null)
+                    msg += " " + ex.InnerException.Message;
+                Console.WriteLine("Error: {0}", msg);
                 Console.ResetColor();
                 Environment.Exit(-1);
             }
